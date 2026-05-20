@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+    <link rel="stylesheet" href="/css/style.css" />
+    {{> favicon}}
+    <title>Dashboard</title>
+</head>
+
+<body class="h-screen flex justify-between items-center bg-mybg">
+
+    <nav id="navbar" class="absolute top-0 left-0 right-0 p-4">
+        <p class="text-myaccent font-semibold text-xl">
+            Dashboard
+        </p>
+    </nav>
+    
+    <div class="dashboard-page w-full flex justify-center items-center">
+
+    <div class="bg-mybgs1 p-6 md:w-7/12 lg:w-4/12 rounded-md md:left-auto">
+        <div class="flex flex-col justify-between py-4 items-center">
+                <p class="form-header-text text-myaccent text-3xl font-semibold tracking-wider">Hello, {{username}} {{!-- FIX: LINE --}}</p>
+            <p class="text-myaccent text-md text-center my-3 px-2 py-2 tracking-wide">
+                we're glad to see you again! You have successfully logged in
+            </p>
+            <form action="/user/logout" method="post">
+            <button class="bg-myaccent px-3 py-2 rounded-md mt-3" type="submit">Log Out</button>
+            </form>
+        </div>
+    </div>
+    {{> developer}}
+    </div>
+    <script type="text/javascript" src="/js/register.js"></script>
+    {{#if checkMail}}
+        <script>
+            window.addEventListener('load', () => {
+                showAlertMsg('{{checkMail}}')
+            })
+        </script>
+    {{/if}}
+    {{#if crossUsername}}
+        <script>
+            window.addEventListener('load', () => {
+                showAlertMsg('{{crossUsername}}')
+            })
+        </script>
+    {{/if}}
+</body>
+
+</html>

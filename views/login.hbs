@@ -1,0 +1,95 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/core.css" />
+    {{> favicon}}
+    <title>Sign In</title>
+</head>
+<body class="h-screen flex justify-center items-center bg-mybg">
+    <div class="bg-mybgs1 p-6 w-11/12 md:w-7/12 lg:w-4/12">
+        <div class="flex justify-between py-4 items-center">
+            <p class="form-header-text text-myaccent text-3xl font-semibold tracking-wider">Sign In</p>
+            <button class="hidden" id="btn-back">
+                <span class="material-symbols-outlined text-myaccent">
+                    arrow_back_ios
+                </span>
+            </button>
+        </div>
+        <div class="absolute -top-32 left-5 right-5 flex rounded-md bg-red-400 p-3 text-white transition md:right-auto"
+            id="alert"></div>
+        <div class="absolute -top-32 left-5 right-5 flex rounded-md bg-teal-600 p-3 text-white transition md:right-auto"
+            id="alertSuccess"></div>
+
+        {{!-- {{#if login}}
+        <div class="absolute top-5 left-5 right-5 flex rounded-md bg-red-500 p-3 text-white transition md:right-auto"
+            id="alert">{{login}}</div>
+        {{/if}} --}}
+
+        <form action="/user/login" id="myForm" method="post" class="flex font-poppins text-white">
+            <div class="flex flex-col w-full" id="form-section-1">
+                <label class="text-myaccent mt-2" for="username">Username</label>
+
+                <input class="my-2 p-3 rounded-sm bg-mybg" type="text" name="username" id="username"
+                    placeholder="vedant7" value="{{#if username}}{{username}}{{/if}}" required />
+                <label class="text-myaccent mt-2" for="password">Password</label>
+                <div class="relative flex">
+                    <input class="my-2 p-3 rounded-sm bg-mybg w-full" type="password" name="password" id="password"
+                        placeholder="Strong Password" required />
+                    <div class="absolute inset-y-0 right-12 mr-3 font-mono flex items-center bg-red-400">
+                        <input type="checkbox" class="hidden" name="passwordToggle" id="passwordToggle" />
+                        <label
+                            class="absolute text-sm cursor-pointer z-50 hover:opacity-90 bg-myaccent select-none py-1 px-2 rounded-sm text-mybg"
+                            for="passwordToggle" id="passwordLabel">show</label>
+                    </div>
+                </div>
+                <div class="flex justify-between">
+                    <a href="/user/forgot" class="text-xs underline my-2">Forgot Password?</a>
+                    <a href="/user/register" class="text-xs underline my-2">Don't have an account?</a>
+                </div>
+                <button id="submitBtn"
+                    class="transition-all duration-100 ease hover:opacity-80 active:scale-95 py-3 px-4 bg-myaccent mt-4 rounded-sm uppercase text-black">Sign In</button>
+            </div>
+
+        </form>
+    </div>
+    {{> developer}}
+    <script type="text/javascript" src="/js/login.js"></script>
+    {{#if login}}
+    <script>
+        window.addEventListener('load', () => {
+            showAlertMsg('{{login}}')
+        })
+    </script>
+    {{/if}}
+    {{#if internalServerErr}}
+    <script>
+        window.addEventListener('load', () => {
+            showAlertMsg(internalServerErr)
+        })
+    </script>
+    {{/if}}
+    {{#if passChanged}}
+    <script>
+        window.addEventListener('load', () => {
+            showSuccessMsg('Password Changed Successfully')
+        })
+    </script>
+    {{/if}}
+    {{#if notVerified}}
+    <script>
+        window.addEventListener('load', () => {
+            showAlertMsg('Email not verified, please verify your email to continue')
+        })
+    </script>
+    {{/if}}
+</body>
+
+</html>

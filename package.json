@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node app.js",
     "server": "nodemon app.js -e js, hbs",
-    "build:css": "postcss public/css/tailwind.css -o public/css/style.css --watch"
+    "build:css": "postcss public/css/tailwind.css -o public/css/style.css"
   },
   "keywords": [],
   "author": "",

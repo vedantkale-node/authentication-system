@@ -1,6 +1,4 @@
 .env
 node_modules/
-package-lock.json
 work.md
-views/
 pnpm-lock.yaml
