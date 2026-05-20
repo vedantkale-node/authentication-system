@@ -239,8 +239,9 @@ router.post("/forgot", async (req, res) => {
       req.flash("emailNotFound", "Email does not exist!");
       return res.redirect("/user/forgot");
     }
-    const name = resultEmail[0].firstName;
-    const id = resultEmail[0].id;
+    const user = resultEmail[0];
+    const name = [user.first_name, user.last_name].filter(Boolean).join(" ") || user.username;
+    const id = user.id;
     const token = resultEmail[0].token;
     let resetPasswordLink = `https://auth-system.vedantsapalkar.repl.co/user/forgot/${token}`;
     let transporter = nodemailer.createTransport({
