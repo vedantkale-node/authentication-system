@@ -99,7 +99,7 @@ router.post("/register", limiter, async (req, res) => {
         req.flash("existUsername", "Username Already Exists");
         return res.redirect("/user/register");
       } else {
-        let verificationLink = `https://auth-system.vedantsapalkar.repl.co/user/verify/${token}`;
+        let verificationLink = `https://authentication-system-3145.onrender.com/user/verify/${token}`;
         let transporter = nodemailer.createTransport({
           host: process.env.SMTP_HOST,
           port: process.env.SMTP_PORT,
@@ -243,7 +243,7 @@ router.post("/forgot", async (req, res) => {
     const name = [user.first_name, user.last_name].filter(Boolean).join(" ") || user.username;
     const id = user.id;
     const token = resultEmail[0].token;
-    let resetPasswordLink = `https://auth-system.vedantsapalkar.repl.co/user/forgot/${token}`;
+    let resetPasswordLink = `https://authentication-system-3145.onrender.com/user/forgot/${token}`;
     let transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
       port: process.env.SMTP_PORT,
