@@ -17,6 +17,29 @@ const limiter = rateLimit({
   },
 });
 
+const createSmtpTransporter = () => {
+  const port = Number(process.env.SMTP_PORT) || 587;
+  const requiredEnv = ["SMTP_HOST", "SMTP_USER", "SMTP_SECRET"];
+  const missingEnv = requiredEnv.filter((key) => !process.env[key]);
+
+  if (missingEnv.length > 0) {
+    throw new Error(`Missing SMTP environment variables: ${missingEnv.join(", ")}`);
+  }
+
+  return nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port,
+    secure: port === 465,
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 15000,
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_SECRET,
+    },
+  });
+};
+
 router.get("/login", (req, res) => {
   res.render("login", {
     login: req.flash("fail"),
@@ -100,17 +123,9 @@ router.post("/register", limiter, async (req, res) => {
         return res.redirect("/user/register");
       } else {
         let verificationLink = `https://authentication-system-3145.onrender.com/user/verify/${token}`;
-        let transporter = nodemailer.createTransport({
-          host: process.env.SMTP_HOST,
-          port: process.env.SMTP_PORT,
-          secure: false,
-          auth: {
-            user: process.env.SMTP_USER,
-            pass: process.env.SMTP_SECRET,
-          },
-        });
+        let transporter = createSmtpTransporter();
         const mailOptions = {
-          from: '"Vedant Kale" <vedantsapalkar989@gmail.com>',
+          from: `"Vedant Kale" <${process.env.SMTP_USER}>`,
           to: email,
           subject: "Verify Your Email Address",
           html: `
@@ -171,10 +186,11 @@ Vedant Kale
     }
   } catch (error) {
     if (error.errno == -4039) {
-      return req.flash(
+      req.flash(
         "internetErr",
         "We apologize for the inconvenience, but it seems that there is a problem with your internet connection. Please check your network settings and try again."
       );
+      return res.redirect("/user/register");
     }
     req.flash("internalServerErr", "Internal Server Error!");
     res.redirect("/user/register");
@@ -244,17 +260,9 @@ router.post("/forgot", async (req, res) => {
     const id = user.id;
     const token = resultEmail[0].token;
     let resetPasswordLink = `https://authentication-system-3145.onrender.com/user/forgot/${token}`;
-    let transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: process.env.SMTP_PORT,
-      secure: false,
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_SECRET,
-      },
-    });
+    let transporter = createSmtpTransporter();
     const mailOptions = {
-      from: '"Vedant Kale" <vedantsapalkar989@gmail.com>',
+      from: `"Vedant Kale" <${process.env.SMTP_USER}>`,
       to: email,
       subject: "Reset Password Request",
       html: `
@@ -281,6 +289,9 @@ Vedant Kale
         EmailSentSuccess: true,
       });
     }
+    return res.render("valid", {
+      emailSent: true,
+    });
   } catch (error) {
     req.flash("internalServerErr", "Internal Server Error!");
     res.redirect("/user/forgot");
@@ -339,17 +350,9 @@ router.post("/contact", limiter, async (req, res) => {
     if (resultContact.affectedRows == 1) {
       req.flash('contactSubmit', 'Form Submitted Successfully')
       res.redirect('/contact');
-      let transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST,
-        port: process.env.SMTP_PORT,
-        secure: false,
-        auth: {
-          user: process.env.SMTP_USER,
-          pass: process.env.SMTP_SECRET,
-        },
-      });
+      let transporter = createSmtpTransporter();
       const mailOptions = {
-        from: '"Vedant Kale" <vedantsapalkar989@gmail.com>',
+        from: `"Vedant Kale" <${process.env.SMTP_USER}>`,
         to: 'vedantsapalkar989@gmail.com',
         subject: "Contact Form Notification",
         html: `
