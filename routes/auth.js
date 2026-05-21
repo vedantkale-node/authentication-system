@@ -18,7 +18,7 @@ const limiter = rateLimit({
 });
 
 const createSmtpTransporter = () => {
-  const port = Number(process.env.SMTP_PORT) || 587;
+  const port = Number(process.env.SMTP_PORT) || 465;
   const requiredEnv = ["SMTP_HOST", "SMTP_USER", "SMTP_SECRET"];
   const missingEnv = requiredEnv.filter((key) => !process.env[key]);
 
