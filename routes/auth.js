@@ -32,6 +32,7 @@ const createSmtpTransporter = () => {
     host: process.env.SMTP_HOST,
     port,
     secure: port === 465,
+    family: 4,
     connectionTimeout: 10000,
     greetingTimeout: 10000,
     socketTimeout: 15000,
