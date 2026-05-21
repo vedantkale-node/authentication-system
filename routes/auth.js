@@ -23,13 +23,15 @@ const createSmtpTransporter = () => {
   const missingEnv = requiredEnv.filter((key) => !process.env[key]);
 
   if (missingEnv.length > 0) {
-    throw new Error(`Missing SMTP environment variables: ${missingEnv.join(", ")}`);
+    throw new Error(
+      `Missing SMTP environment variables: ${missingEnv.join(", ")}`,
+    );
   }
 
   return nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port,
-    secure: port === 465,
+    secure: port === 587,
     connectionTimeout: 10000,
     greetingTimeout: 10000,
     socketTimeout: 15000,
@@ -45,7 +47,7 @@ router.get("/login", (req, res) => {
     login: req.flash("fail"),
     internalServerErr: req.flash("internalServerErr"),
     passChanged: req.flash("passChange"),
-    notVerified: req.flash("notVerified")
+    notVerified: req.flash("notVerified"),
   });
 });
 
@@ -74,15 +76,18 @@ router.post("/login", limiter, async (req, res) => {
     if (checkLogin.length > 0) {
       let checkPassword = await bcrypt.compare(
         password,
-        checkLogin[0].password
+        checkLogin[0].password,
       );
       if (!checkPassword) {
         req.flash("fail", "Invalid Username or Password");
         res.redirect("/user/login");
       } else {
         if (checkLogin[0].verified === 0) {
-          req.flash("notVerified", "Email not verified, please verify your email to continue");
-          return res.redirect('/user/login');
+          req.flash(
+            "notVerified",
+            "Email not verified, please verify your email to continue",
+          );
+          return res.redirect("/user/login");
         }
         req.session.user = username;
         return res.redirect("/");
@@ -188,7 +193,7 @@ Vedant Kale
     if (error.errno == -4039) {
       req.flash(
         "internetErr",
-        "We apologize for the inconvenience, but it seems that there is a problem with your internet connection. Please check your network settings and try again."
+        "We apologize for the inconvenience, but it seems that there is a problem with your internet connection. Please check your network settings and try again.",
       );
       return res.redirect("/user/register");
     }
@@ -228,7 +233,7 @@ router.get("/verify/:token", async (req, res) => {
     if (error.errno == -4039) {
       req.flash(
         "internetErr",
-        "We apologize for the inconvenience, but it seems that there is a problem with your internet connection. Please check your network settings and try again."
+        "We apologize for the inconvenience, but it seems that there is a problem with your internet connection. Please check your network settings and try again.",
       );
       return res.redirect("/user/forgot");
     }
@@ -256,7 +261,9 @@ router.post("/forgot", async (req, res) => {
       return res.redirect("/user/forgot");
     }
     const user = resultEmail[0];
-    const name = [user.first_name, user.last_name].filter(Boolean).join(" ") || user.username;
+    const name =
+      [user.first_name, user.last_name].filter(Boolean).join(" ") ||
+      user.username;
     const id = user.id;
     const token = resultEmail[0].token;
     let resetPasswordLink = `https://authentication-system-3145.onrender.com/user/forgot/${token}`;
@@ -348,12 +355,12 @@ router.post("/contact", limiter, async (req, res) => {
     const contactSql = `INSERT INTO contact (name, email, message) VALUES (?,?,?)`;
     const resultContact = await pool.query(contactSql, [name, email, message]);
     if (resultContact.affectedRows == 1) {
-      req.flash('contactSubmit', 'Form Submitted Successfully')
-      res.redirect('/contact');
+      req.flash("contactSubmit", "Form Submitted Successfully");
+      res.redirect("/contact");
       let transporter = createSmtpTransporter();
       const mailOptions = {
         from: `"Vedant Kale" <${process.env.SMTP_USER}>`,
-        to: 'vedantsapalkar989@gmail.com',
+        to: "vedantsapalkar989@gmail.com",
         subject: "Contact Form Notification",
         html: `
         Name: ${name} <br>
@@ -363,15 +370,14 @@ router.post("/contact", limiter, async (req, res) => {
       };
       let mailSent = await transporter.sendMail(mailOptions);
       if (mailSent.accepted.length > 0) {
-        return console.log('Email Sent');
-      }
-      else {
-        return console.log('Email Sending Error!');
+        return console.log("Email Sent");
+      } else {
+        return console.log("Email Sending Error!");
       }
     }
     console.log(resultContact);
   } catch (error) {
-  console.log(error);
+    console.log(error);
   }
 });
 
